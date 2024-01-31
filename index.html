@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reverse Guess Number Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Reverse guess the number game</h1>
+
+    <h2>Think of a number and I will try and see if I can guess it!</h2>
+
+    <form id="askName">
+      <label for="firstName">But first, what's your name?</label>
+      <input
+        type="text"
+        name="firstName"
+        id="firstName"
+        placeholder="Enter name"
+      />
+      <button>Enter name</button>
+    </form>
+
+    <form id="greeting">
+      <label>
+        Hello <span data-field="firstName"></span>! Let's get started:
+      </label>
+    </form>
+
+    <ul id="guessList"></ul>
+
+    <div id="endGameMessage">
+      <p>I guessed correctly, which ends the game. Thank you for playing.</p>
+      <button id="tryAgainBtn" style="margin-bottom: 10px">Try again!</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
