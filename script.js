@@ -1,10 +1,14 @@
 "use strict";
-let computerGuess;
+let start = 1;
+let end = 100;
+let compGuess;
 
 window.addEventListener("load", setup);
 
 function setup() {
   console.log("Javascript is running!");
+  compGuess = Math.floor((start + end) / 2);
+  addEventListeners();
   hide();
   askName();
 }
@@ -13,6 +17,7 @@ function hide() {
   document.querySelector("#greeting").classList.add("hide");
   document.querySelector("#askName").classList.add("hide");
   document.querySelector("#endGameMessage").classList.add("hide");
+  document.querySelector("#btnDiv").classList.add("hide");
 }
 
 function askName() {
@@ -40,6 +45,7 @@ function answeredName(event) {
 
   fillInFields("firstName", firstName);
   greeting();
+  printGuess(compGuess);
 }
 
 function greeting() {
@@ -49,80 +55,63 @@ function greeting() {
   askNameForm.classList.add("hide");
 
   form.classList.remove("hide");
-  makeGuess();
+  makeNewGuess();
 }
 
-function makeGuess() {
-  const guess = randomNumber();
-  console.log("Guess made: " + guess);
+function makeNewGuess() {
+  const form = document.querySelector("#btnDiv");
+  form.classList.remove("hide");
 
-  const list = document.querySelector("#guessList");
-  const li = createListItem(guess);
-
-  addButtonsToListItem(li);
-  removeButtonsFromPreviousGuess(list);
-
-  // Indsætter nyeste gæt i toppen af listen
-  list.insertBefore(li, list.firstChild);
-}
-
-function createListItem(guess) {
-  const li = document.createElement("li");
-  li.textContent = `My guess is: ${guess} `;
-  return li;
-}
-
-function addButtonsToListItem(li) {
-  const tooLowBtn = createButton("Too low!", guessTooLow, li);
-  const tooHighBtn = createButton("Too high!", guessTooHigh, li);
-  const correctBtn = createButton("Correct!", guessCorrect, li);
-
-  // Indsætter knapper på li elementet
-  li.appendChild(tooLowBtn);
-  li.appendChild(tooHighBtn);
-  li.appendChild(correctBtn);
-}
-
-function createButton(text, clickHandler, li) {
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click", () => clickHandler(li));
-  return button;
-}
-
-function removeButtonsFromPreviousGuess(list) {
-  // Fjerner knapperne fra alle gamle gæt
-  if (list.firstChild) {
-    const oldGuess = list.firstChild;
-    oldGuess.querySelectorAll("button").forEach((button) => {
-      button.removeEventListener("click", guessTooLow);
-      button.removeEventListener("click", guessTooHigh);
-      button.removeEventListener("click", guessCorrect);
-      button.remove();
-    });
+  let prevCompGuess = compGuess;
+  compGuess = Math.floor((start + end) / 2);
+  if (prevCompGuess === compGuess) {
+    // Player lie here
+  } else {
+    printGuess(compGuess);
   }
 }
 
-function randomNumber() {
-  computerGuess = Math.floor(Math.random() * 99) + 1;
-  return computerGuess;
+function addEventListeners() {
+  let btnLow = document.querySelector("#btnTooLow");
+  let btnHigh = document.querySelector("#btnTooHigh");
+  let btnCorrect = document.querySelector("#btnCorrect");
+
+  btnLow.addEventListener("click", guessTooLow);
+  btnHigh.addEventListener("click", guessTooHigh);
+  btnCorrect.addEventListener("click", guessCorrect);
 }
 
-function guessTooLow(li) {
-  console.log("Too low was clicked!");
-  li.textContent = `Guessed: ${computerGuess} - Which was too low!`;
-  makeGuess();
+function printGuess(guess) {
+  const list = document.querySelector("#guessList");
+  const listItem = document.createElement("li");
+  listItem.textContent = `I'm guessing it's: ${guess}?`;
+  list.appendChild(listItem);
 }
 
-function guessTooHigh(li) {
-  console.log("Too high clicked!");
-  li.textContent = `Guessed: ${computerGuess} - Which was too high!`;
-  makeGuess();
+function guessTooLow() {
+  console.log(`Guess ${compGuess} - was too low.`);
+  start = compGuess + 1;
+  printGuessWithMessage(compGuess, "Too low");
+  makeNewGuess();
+}
+
+function guessTooHigh() {
+  console.log(`Guess ${compGuess} - was too high.`);
+  end = compGuess - 1;
+  printGuessWithMessage(compGuess, "Too high");
+  makeNewGuess();
+}
+
+function printGuessWithMessage(guess, message) {
+  const list = document.querySelector("#guessList");
+  const listItem = document.createElement("li");
+  listItem.textContent = `${guess}: ${message}`;
+  list.appendChild(listItem);
 }
 
 function guessCorrect(li) {
   console.log("Correct clicked!");
-  li.textContent = `Guessed: ${computerGuess} - Which was CORRECT!! :-D`;
+  li.textContent = `Guessed: ${compGuess} - Which was CORRECT!! :-D`;
   const form = document.querySelector("#endGameMessage");
   form.classList.remove("hide");
 
